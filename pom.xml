@@ -63,5 +63,20 @@
 			</plugin>
 		</plugins>
 	</build>
-
+	<profiles>
+		<profile>
+			<id>sonarcloud</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+			<!-- Provide the valid project key in the format groupId:artifactId -->
+				<sonar.projectKey>ayushrai-deloitte-1</sonar.projectKey>
+				<sonar.organization>ayushrai-deloitte</sonar.organization>
+				<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+				<sonar.login>${{ secrets.SONAR_TOKEN }}</sonar.login>
+			<!-- Configure other SonarCloud properties as needed -->
+			</properties>
+		</profile>
+	</profiles>
 </project>
