@@ -5,7 +5,7 @@ on:
   #Trigger the workflow on push from the main branch
   push:
     branches:
-      - master
+      - main
 jobs:
   #Test's job
   tests:
@@ -50,23 +50,27 @@ jobs:
           java-version: '11'
       #Set up SonarCloud cache
       - name: Cache SonarCloud packages
-        #This action allows caching dependencies and build outputs to improve workflow execution time.
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
-      #Set up Maven cache
+
       - name: Cache Maven packages
-        #This action allows caching dependencies and build outputs to improve workflow execution time.
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
-          path: ~/.m2
+          path: ~/.m2/repository
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      #Analyze project with SonarCloud
+
+      - name: Get Default Branch
+        id: get_default_branch
+        run: |
+          echo "::set-output name=default_branch::$(curl -s -H 'Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/${{ github.repository }} | jq -r '.default_branch')"
+
       - name: Analyze with SonarCloud
-        run: mvn -X verify sonar:sonar -Dsonar.projectKey=ayushrai-deloitte-1 -Dsonar.organization=ayushrai-deloitte -Dsonar.host.url=https://sonarcloud.io -Dsonar.branch.name=main -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        run: |
+          mvn -X verify sonar:sonar -Dsonar.projectKey=ayushrai-deloitte-1 -Dsonar.organization=ayushrai-deloitte -Dsonar.host.url=https://sonarcloud.io -Dsonar.branch.name=${{ steps.get_default_branch.outputs.default_branch }} -Dsonar.login=${{ secrets.SONAR_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
