@@ -74,7 +74,6 @@
 				<sonar.projectKey>ayushrai-deloitte-1</sonar.projectKey>
 				<sonar.organization>ayushrai-deloitte</sonar.organization>
 				<sonar.host.url>https://sonarcloud.io</sonar.host.url>
-				<sonar.login>${{ secrets.SONAR_TOKEN }}</sonar.login>
 			<!-- Configure other SonarCloud properties as needed -->
 			</properties>
 		</profile>
